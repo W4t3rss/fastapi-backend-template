@@ -1,7 +1,6 @@
 
 import sys
 import os
-from pathlib import Path
 from loguru import logger
 from app.core.config import path_cfg
 from app.core.config.path_cfg import get_path_cfg   
@@ -31,14 +30,13 @@ def init_logger(level: str | None = None) -> None:
     # 文件
     log_path = path_cfg.LOGS_PATH
     log_path.mkdir(parents=True, exist_ok=True)
-
     logger.add(
-        log_path / "{time:YYYY-MM-DD}.log",   # 每天一个文件
+        log_path / "{time:YYYY-MM-DD}.log",   
         level=level,
         format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} | {message}",
-        rotation="00:00",      # 每天凌晨 0 点切割
-        retention="30 days",   # 自动保留最近 30 天
-        compression="zip",     # 压缩旧日志节省空间
+        rotation="00:00",      
+        retention="30 days",  
+        compression="zip",    
         encoding="utf-8",
         enqueue=True,
     )

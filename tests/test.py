@@ -1,14 +1,9 @@
 
-from app.utils import init_logger, logger
+from app.schemas.users import UserBase
 
 
 if __name__ == "__main__":
-    
-    init_logger()
-    logger.debug("This is a debug message")
-    logger.info("This is an info message")  
-    logger.warning("This is a warning message")
-    logger.error("This is an error message")
-    logger.critical("This is a critical message")
-
-
+    print(UserBase(user_name="张三", phone_number=""))
+    print(UserBase(user_name="李四", phone_number=None))
+    print(UserBase(user_name="王五", phone_number=""))
+    print(UserBase(user_name="赵六", phone_number="+8613712345678"))
