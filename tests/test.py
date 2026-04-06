@@ -1,12 +1,14 @@
 
-from app.core.security import create_code, verify_code_expired
+from app.utils import init_logger, logger
 
 
 if __name__ == "__main__":
     
-    code, expire_time = create_code()
-    print(f"Generated code: {code}, expires at: {expire_time}")
-    
-    is_expired = verify_code_expired(expire_time)
-    print(f"Is the code expired? {is_expired}")
+    init_logger()
+    logger.debug("This is a debug message")
+    logger.info("This is an info message")  
+    logger.warning("This is a warning message")
+    logger.error("This is an error message")
+    logger.critical("This is a critical message")
+
 

@@ -1,5 +1,4 @@
 
-# 常见
 __pycache__/
 *.py[cod]
 *.sqlite3
@@ -7,7 +6,7 @@ __pycache__/
 .env
 .venv/
 venv/
-logs/*.log
+**/logs/
 .idea/
 .vscode/
 .mypy_cache/
@@ -16,4 +15,3 @@ alembic/__pycache__/
 migrations/__pycache__/
 migrations/versions/__pycache__/
 
-# 实际项目
