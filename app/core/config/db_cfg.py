@@ -1,9 +1,9 @@
 
-from pydantic import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
 
-class DBCfg(BaseSettings):
+class DbCfg(BaseSettings):
 
     # .env 文件 -> 默认值
     model_config = SettingsConfigDict(
@@ -12,7 +12,7 @@ class DBCfg(BaseSettings):
         extra="ignore"
         )
 
-    DB_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/pet-system"
+    DB_URL: str = "postgresql+asyncpg://postgres:520831@localhost:5432/pet-system"
     DB_ECHO: bool = False
     DB_POOL_SIZE: int = 5
     DB_MAX_OVERFLOW: int = 10
@@ -20,7 +20,7 @@ class DBCfg(BaseSettings):
 
 
 @lru_cache
-def get_db_cfg() -> DBCfg:
-    return DBCfg()
+def get_db_cfg() -> DbCfg:
+    return DbCfg()
 
 

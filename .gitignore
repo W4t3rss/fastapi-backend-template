@@ -13,5 +13,7 @@ logs/*.log
 .mypy_cache/
 .pytest_cache/
 alembic/__pycache__/
+migrations/__pycache__/
+migrations/versions/__pycache__/
 
 # 实际项目

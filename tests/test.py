@@ -1,6 +1,7 @@
 
-from app.core.config.path_cfg import PathConfig
+from app.core.config import get_path_cfg
+path_cfg = get_path_cfg()
 
 
 if __name__ == "__main__":
-    print(PathConfig.PROJECT_ROOT)
+    print(path_cfg.PROJECT_ROOT)
