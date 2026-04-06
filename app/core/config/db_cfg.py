@@ -1,5 +1,6 @@
 
 from pydantic import BaseSettings, SettingsConfigDict
+from functools import lru_cache
 
 
 class DBCfg(BaseSettings):
@@ -16,3 +17,10 @@ class DBCfg(BaseSettings):
     DB_POOL_SIZE: int = 5
     DB_MAX_OVERFLOW: int = 10
     DB_POOL_RECYCLE: int = 3600
+
+
+@lru_cache
+def get_db_cfg() -> DBCfg:
+    return DBCfg()
+
+
