@@ -1,5 +1,4 @@
 
-from dataclasses import KW_ONLY
 from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass  
   
  
