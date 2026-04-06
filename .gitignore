@@ -1,0 +1,17 @@
+
+# 常见
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.db
+.env
+.venv/
+venv/
+logs/*.log
+.idea/
+.vscode/
+.mypy_cache/
+.pytest_cache/
+alembic/__pycache__/
+
+# 实际项目
