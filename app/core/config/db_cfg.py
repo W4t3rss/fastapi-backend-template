@@ -18,6 +18,9 @@ class DbCfg(BaseSettings):
     DB_MAX_OVERFLOW: int = 10
     DB_POOL_RECYCLE: int = 3600
 
+    SKIP: int = 0
+    LIMIT: int = 10
+
 
 @lru_cache
 def get_db_cfg() -> DbCfg:

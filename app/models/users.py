@@ -9,7 +9,7 @@ from .base import Base
 class Users(Base):
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, init=False)
     role: Mapped[int] = mapped_column(Integer, nullable=False, default=0)  # 0: 普通用户, 1: 管理员
     user_name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True, index=True)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -18,11 +18,17 @@ class Users(Base):
     code: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     code_expire_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
-    create_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True, init=False)
+    create_time: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        init=False,
+    )
     update_time: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
         server_default=func.now(),
         onupdate=func.now(),
+        init=False,
     )

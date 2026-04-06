@@ -12,14 +12,14 @@ class Token(BaseResponse):
 
 class RegisterRequest(BaseRequest):
     user_name: str = Field(..., min_length=2, max_length=50, description="Username")
-    phone_number: str = Field(default=None, max_length=20, description="User's phone number")
+    phone_number: str | None = Field(default=None, max_length=20, description="User's phone number")
     password: str = Field(..., min_length=6, max_length=128, description="Password")
     confirm_password: str = Field(..., min_length=6, max_length=128, description="Confirm Password")
     code: str = Field(..., min_length=4, max_length=20, description="Verification Code")
 
     @field_validator("phone_number")
     @classmethod
-    def validate_phone_number(cls, value: str) -> str:
+    def validate_phone_number(cls, value: str | None) -> str | None:
         return validate_phone_number(value)
 
     @field_validator("confirm_password")
@@ -27,7 +27,7 @@ class RegisterRequest(BaseRequest):
     def validate_passwords(cls, value: str, info: ValidationInfo) -> str:
         password = info.data.get("password")
         if password is None:
-            return value
+            return value  # 如果 password 还未验证通过，先不进行 confirm_password 的验证
         validate_password(password, value)
         return value
 
@@ -51,7 +51,12 @@ class LoginResponse(Token):
 
 # Forgot Password
 class SendCodeRequest(BaseRequest):
-    phone_number: str | None = Field(default=None, max_length=20, description="User's phone number")
+    phone_number: str = Field(..., max_length=20, description="User's phone number")
+
+    @field_validator("phone_number")
+    @classmethod
+    def validate_phone_number(cls, value: str | None) -> str | None:
+        return validate_phone_number(value)
 
 
 class SendCodeResponse(BaseResponse):
@@ -59,14 +64,14 @@ class SendCodeResponse(BaseResponse):
 
 
 class ResetPasswordRequest(BaseRequest):
-    phone_number: str = Field(default=None, max_length=20, description="User's phone number")
+    phone_number: str | None = Field(default=None, max_length=20, description="User's phone number")
     new_password: str = Field(..., min_length=6, max_length=128, description="New Password")
     confirm_password: str = Field(..., min_length=6, max_length=128, description="Confirm New Password")
     code: str = Field(..., min_length=4, max_length=20, description="Verification Code")
 
     @field_validator("phone_number")
     @classmethod    
-    def validate_phone_number(cls, value: str) -> str | None:
+    def validate_phone_number(cls, value: str | None) -> str | None:
         return validate_phone_number(value)
 
     @field_validator("confirm_password")

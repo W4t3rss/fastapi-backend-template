@@ -1,8 +1,6 @@
 
 from datetime import datetime
-import re
 from pydantic import Field
-from sqlalchemy import desc
 from .base import BaseRequest, BaseResponse
 
 
@@ -31,6 +29,7 @@ class PetRead(BaseResponse):
     owner_id: int
     pet_name: str
     create_time: datetime
+    update_time: datetime
 
 
 class PetReadAdmin(PetRead):
