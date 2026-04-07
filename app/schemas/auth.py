@@ -1,6 +1,5 @@
 
 from typing import Literal
-
 from pydantic import Field, ValidationInfo, field_validator
 from .validator import validate_phone_number,validate_password
 from .base import BaseRequest, BaseResponse
@@ -54,6 +53,8 @@ class LoginResponse(Token):
 # Forgot Password
 class SendCodeRequest(BaseRequest):
     phone_number: str = Field(..., max_length=20, description="User's phone number")
+    scene:Literal["register", "reset_password"] = Field(..., description="Verification code scene, either 'register' or 'reset_password'")
+
 
     @field_validator("phone_number")
     @classmethod
@@ -63,7 +64,6 @@ class SendCodeRequest(BaseRequest):
 
 class SendCodeResponse(BaseResponse):
     message: str = "Verification code sent"
-    scene:Literal["register", "reset_password"] = Field(..., description="Verification code scene, either 'register' or 'reset_password'")
 
 
 class ResetPasswordRequest(BaseRequest):

@@ -41,6 +41,12 @@ class CodeExpiredException(BadRequestException):
         super().__init__(message=message, error_code=error_cfg.CODE_EXPIRED, details=details)
 
 
+# 验证码发送过于频繁
+class CodeSendTooFrequentlyException(BadRequestException):
+    def __init__(self, message: str = "Code sent too frequently", *, details: Any | None = None) -> None:
+        super().__init__(message=message, error_code=error_cfg.CODE_SEND_TOO_FREQUENTLY, details=details)
+
+
 # 手机号未注册
 class PhoneNotRegisteredException(NotFoundException):
     def __init__(self, message: str = "Phone number is not registered", *, details: Any | None = None) -> None:

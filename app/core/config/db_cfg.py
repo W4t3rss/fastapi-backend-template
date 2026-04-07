@@ -18,7 +18,6 @@ class DbCfg(BaseSettings):
     DB_MAX_OVERFLOW: int = 10
     DB_POOL_RECYCLE: int = 3600
 
-
     LIMIT: int = 10
 
 

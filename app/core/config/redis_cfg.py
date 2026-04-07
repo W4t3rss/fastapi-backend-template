@@ -10,7 +10,7 @@ class RedisCfg(BaseSettings):
         extra="ignore",
     )
 
-    REDIS_URL: str = "redis://localhost:6379/0"
+    REDIS_URL: str = "redis://:520831@localhost:6379/0"
     REDIS_DECODE_RESPONSES: bool = True
 
 

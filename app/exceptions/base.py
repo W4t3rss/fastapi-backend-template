@@ -3,7 +3,7 @@ from typing import Any
 
 
 # Base
-class BaseException(Exception):
+class AppBaseException(Exception):
     def __init__(
             self,
             message: str ,
@@ -29,7 +29,7 @@ class BaseException(Exception):
 
 
 # 400 Bad Request
-class BadRequestException(BaseException):
+class BadRequestException(AppBaseException):
     def __init__(
         self,
         message: str,
@@ -46,7 +46,7 @@ class BadRequestException(BaseException):
 
 
 # 401 Unauthorized
-class UnauthorizedException(BaseException):
+class UnauthorizedException(AppBaseException):
     def __init__(
         self,
         message: str,
@@ -63,7 +63,7 @@ class UnauthorizedException(BaseException):
 
 
 # 403 Forbidden
-class ForbiddenException(BaseException):
+class ForbiddenException(AppBaseException):
     def __init__(
         self,
         message: str,
@@ -80,7 +80,7 @@ class ForbiddenException(BaseException):
 
 
 # 404 Not Found
-class NotFoundException(BaseException):
+class NotFoundException(AppBaseException):
     def __init__(
         self,
         message: str,
@@ -97,7 +97,7 @@ class NotFoundException(BaseException):
 
 
 # 409 Conflict
-class ConflictException(BaseException):
+class ConflictException(AppBaseException):
     def __init__(
         self,
         message: str,
@@ -112,13 +112,13 @@ class ConflictException(BaseException):
             details=details
         )
 
-# 422 Unprocessable Entity
-class UnprocessableEntityException(BaseException):
+# 422 Validation Error
+class ValidationErrorException(AppBaseException):
     def __init__(
         self,
         message: str,
         *,
-        error_code: str = "UNPROCESSABLE_ENTITY",
+        error_code: str = "VALIDATION_ERROR",
         details: Any | None = None,
     ) -> None:
         super().__init__(
@@ -130,7 +130,7 @@ class UnprocessableEntityException(BaseException):
 
 
 # 500 Internal Server Error
-class InternalServerErrorException(BaseException):
+class InternalServerErrorException(AppBaseException):
     def __init__(
         self,
         message: str,
