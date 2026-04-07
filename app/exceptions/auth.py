@@ -1,7 +1,7 @@
+
 from typing import Any
 from .base import BadRequestException, ForbiddenException, NotFoundException, UnauthorizedException
 from app.core.config.error_cfg import get_error_cfg
-
 error_cfg = get_error_cfg()
 
 

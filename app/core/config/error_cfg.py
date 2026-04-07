@@ -1,6 +1,6 @@
+
 from dataclasses import dataclass
 from functools import lru_cache
-
 
 
 @dataclass
@@ -25,6 +25,7 @@ class ErrorCfg:
     CODE_REQUIRED: str = "CODE_REQUIRED"
     CODE_INVALID: str = "CODE_INVALID"
     CODE_EXPIRED: str = "CODE_EXPIRED"
+    CODE_SEND_TOO_FREQUENTLY: str = "CODE_SEND_TOO_FREQUENTLY"
     PHONE_NOT_REGISTERED: str = "PHONE_NOT_REGISTERED"
     PHONE_NOT_VERIFIED: str = "PHONE_NOT_VERIFIED"
     OLD_PASSWORD_INCORRECT: str = "OLD_PASSWORD_INCORRECT"

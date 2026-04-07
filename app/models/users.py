@@ -15,8 +15,9 @@ class Users(Base):
     password: Mapped[str] = mapped_column(String(255), nullable=False)
     phone_number: Mapped[Optional[str]] = mapped_column(String(20), nullable=True, unique=True, index=True)
 
-    code: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
-    code_expire_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    # 不应该在数据库模型中存储验证码和过期时间，这些应该放在 Redis 或其他缓存中
+    # code: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    # code_expire_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
     is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True, init=False)
     create_time: Mapped[datetime] = mapped_column(

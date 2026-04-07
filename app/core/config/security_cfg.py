@@ -20,6 +20,8 @@ class SecurityCfg(BaseSettings):
     # Code 验证码配置
     CODE_LENGTH: int = 6
     CODE_EXPIRE_MINUTES: int = 5
+    CODE_COOLDOWN_SECONDS: int = 60
+    CODE_CACHE_PREFIX: str = "auth:code:"  # Redis 中验证码的 key 前缀
 
 
 @lru_cache

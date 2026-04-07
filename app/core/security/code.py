@@ -1,27 +1,42 @@
-from operator import is_
+
+import hashlib
+import hmac
 import random
-from datetime import datetime, timedelta, timezone
 from app.core.config import get_security_cfg
 security_cfg = get_security_cfg()
 
 
-def create_code() -> tuple[str, datetime]:
+def create_code() -> str:
     """
-    生成验证码字符串 和 对应过期时间
-    return: (验证码字符串, 验证码过期时间的 datetime 对象)
+    生成纯数字验证码
     """
-    length = security_cfg.CODE_LENGTH
-    code = ''.join(random.choices('0123456789', k=length))
-    now = datetime.now(timezone.utc)
-    expire_time = now + timedelta(minutes=security_cfg.CODE_EXPIRE_MINUTES) 
-    return code, expire_time
+    return "".join(random.choices("0123456789", k=security_cfg.CODE_LENGTH))
 
 
-def verify_code_expired(expire_time: datetime) -> bool:
+def create_code_hash(code: str) -> str:
     """
-    判断验证码是否过期
-    param expire_time: 验证码过期时间的 datetime 对象
-    return: True 如果验证码已过期，否则 False
+    对验证码做哈希，避免在 Redis 里明文存储验证码
     """
-    now = datetime.now(timezone.utc)
-    return now > expire_time
+    return hashlib.sha256(code.encode("utf-8")).hexdigest()
+
+
+def verify_code_hash(code: str, code_hash: str) -> bool:
+    """
+    比较验证码与哈希是否匹配
+    """
+    current_hash = create_code_hash(code)
+    return hmac.compare_digest(current_hash, code_hash)
+
+
+def get_code_cache_key(scene: str, phone_number: str) -> str:
+    """
+    验证码缓存 key
+    """
+    return f"{security_cfg.CODE_CACHE_PREFIX}:{scene}:{phone_number}"
+
+
+def get_code_cooldown_key(scene: str, phone_number: str) -> str:
+    """
+    验证码发送冷却 key
+    """
+    return f"{security_cfg.CODE_CACHE_PREFIX}:cooldown:{scene}:{phone_number}"

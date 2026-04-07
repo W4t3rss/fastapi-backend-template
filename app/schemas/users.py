@@ -52,5 +52,5 @@ class UserRead(BaseResponse):
 class UserReadAdmin(UserRead):
     role: int
     is_deleted: bool
-    code: str | None
-    code_expire_time: datetime | None
+    # code: str | None
+    # code_expire_time: datetime | None

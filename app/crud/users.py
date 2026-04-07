@@ -169,6 +169,7 @@ async def update_user(db: AsyncSession, user_id: int, user_update: UserUpdate) -
     await db.refresh(user)
     return user
 
+
 async def update_user_admin(db: AsyncSession, user_id: int, user_update: UserUpdateAdmin) -> Users | None:
     """
     更新用户信息（管理员）

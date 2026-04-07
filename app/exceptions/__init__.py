@@ -24,7 +24,8 @@ __all__ = [
     "CodeRequiredException",
     "CodeInvalidException",
     "CodeExpiredException",
+    "CodeSendTooFrequentlyException",
     "PhoneNotRegisteredException",
     "PhoneNotVerifiedException",
-    "OldPasswordIncorrectException",
+    "OldPasswordIncorrectException"
 ]

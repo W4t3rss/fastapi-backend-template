@@ -2,7 +2,6 @@
 import sys
 import os
 from loguru import logger
-from app.core.config import path_cfg
 from app.core.config.path_cfg import get_path_cfg   
 path_cfg = get_path_cfg()
 
