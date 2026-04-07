@@ -1,32 +1,8 @@
 
-from .base import BaseRequest, BaseResponse
-from .auth import (
-    Token,
-    RegisterRequest,
-    RegisterResponse,
-    LoginRequest,
-    LoginResponse,
-    SendCodeRequest,
-    SendCodeResponse,
-    ResetPasswordRequest,
-    ResetPasswordResponse,
-)
-from .users import (
-    UserBase,
-    UserCreate,
-    UserCreateAdmin,
-    UserUpdate,
-    UserRead,
-    UserReadAdmin,
-)
-from .pets import (
-    PetBase,
-    PetCreate,
-    PetUpdate,
-    PetUpdateAdmin,
-    PetRead,
-    PetReadAdmin,
-)
+from .base import *
+from .auth import *
+from .users import *
+from .pets import *
 
 
 __all__ = [

@@ -1,0 +1,35 @@
+from dataclasses import dataclass
+from functools import lru_cache
+
+
+
+@dataclass
+class ErrorCfg:
+
+    # Users errors
+    USER_NOT_FOUND: str = "USER_NOT_FOUND"
+    USERNAME_ALREADY_EXISTS: str = "USERNAME_ALREADY_EXISTS"
+    PHONE_ALREADY_EXISTS: str = "PHONE_ALREADY_EXISTS"
+    PHONE_NUMBER_ALREADY_EXISTS: str = "PHONE_NUMBER_ALREADY_EXISTS"
+    CANNOT_DELETE_SELF: str = "CANNOT_DELETE_SELF"
+
+    # Pets errors
+    PET_NOT_FOUND: str = "PET_NOT_FOUND"
+    OWNER_NOT_FOUND: str = "OWNER_NOT_FOUND"
+    PET_ALREADY_EXISTS: str = "PET_ALREADY_EXISTS"
+
+    # Auth errors
+    INVALID_CREDENTIALS: str = "INVALID_CREDENTIALS"
+    TOKEN_INVALID: str = "TOKEN_INVALID"
+    TOKEN_EXPIRED: str = "TOKEN_EXPIRED"
+    CODE_REQUIRED: str = "CODE_REQUIRED"
+    CODE_INVALID: str = "CODE_INVALID"
+    CODE_EXPIRED: str = "CODE_EXPIRED"
+    PHONE_NOT_REGISTERED: str = "PHONE_NOT_REGISTERED"
+    PHONE_NOT_VERIFIED: str = "PHONE_NOT_VERIFIED"
+    OLD_PASSWORD_INCORRECT: str = "OLD_PASSWORD_INCORRECT"
+
+
+@lru_cache
+def get_error_cfg() -> ErrorCfg:
+    return ErrorCfg()
