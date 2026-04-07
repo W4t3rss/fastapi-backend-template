@@ -1,5 +1,6 @@
 
-from fastapi import FastAPI
+
+from fastapi import APIRouter
 
 
-admini_router = FastAPI()  
+admini_router = APIRouter()  

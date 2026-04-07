@@ -28,7 +28,7 @@ __all__ = [
     "CodeSendTooFrequentlyException",
     "PhoneNotRegisteredException",
     "PhoneNotVerifiedException",
-    "OldPasswordIncorrectException"
+    "OldPasswordIncorrectException",
 
 
     # Handler
