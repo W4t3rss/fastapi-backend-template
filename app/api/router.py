@@ -1,10 +1,10 @@
-
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import SQLAlchemyError
 from app.middlewares import AccessLogMiddleware, RequestContextMiddleware
 from app.api.v1 import v1_router
+from app.api.v1.routers import health_router
 from app.core.config import get_app_cfg
 from app.core.lifespan import lifespan
 from app.exceptions.base import AppBaseException
@@ -39,6 +39,7 @@ def create_app() -> FastAPI:
         allow_headers=app_cfg.CORS_ALLOW_HEADERS,
     )
 
+    app.include_router(health_router)
     app.include_router(v1_router, prefix=app_cfg.API_V1_PREFIX)
 
     app.add_exception_handler(AppBaseException, app_base_exception_handler)
@@ -46,20 +47,12 @@ def create_app() -> FastAPI:
     app.add_exception_handler(RequestValidationError, validation_exception_handler)
     app.add_exception_handler(SQLAlchemyError, sqlalchemy_exception_handler)
     app.add_exception_handler(Exception, generic_exception_handler)
-    
+
     @app.get("/", include_in_schema=False)
     async def root() -> dict[str, str]:
         return {
             "message": f"{app_cfg.APP_NAME} is running",
             "docs": app_cfg.DOCS_URL,
-            "version": app_cfg.APP_VERSION,
-        }
-
-    @app.get("/health", tags=["system"], summary="Health check")
-    async def health_check() -> dict[str, str]:
-        return {
-            "status": "ok",
-            "service": app_cfg.APP_NAME,
             "version": app_cfg.APP_VERSION,
         }
 
