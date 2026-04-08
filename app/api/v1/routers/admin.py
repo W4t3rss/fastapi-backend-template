@@ -1,6 +1,6 @@
+
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.deps import get_current_admin, get_db
 from app.models.users import Users
 from app.schemas.pets import (

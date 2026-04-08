@@ -1,10 +1,16 @@
 
-from dataclasses import dataclass
 from functools import lru_cache
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-@dataclass
-class ErrorCfg:
+class ErrorCfg(BaseSettings):
+
+    # .env 文件 -> 默认值
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
     # Users errors
     USER_NOT_FOUND: str = "USER_NOT_FOUND"
