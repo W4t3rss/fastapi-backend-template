@@ -46,7 +46,7 @@ def create_app() -> FastAPI:
     app.add_exception_handler(RequestValidationError, validation_exception_handler)
     app.add_exception_handler(SQLAlchemyError, sqlalchemy_exception_handler)
     app.add_exception_handler(Exception, generic_exception_handler)
-
+    
     @app.get("/", include_in_schema=False)
     async def root() -> dict[str, str]:
         return {
