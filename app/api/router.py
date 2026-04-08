@@ -5,11 +5,11 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.api.v1 import v1_router
 from app.exceptions.base import AppBaseException
 from app.exceptions.handler import (
-    app_base_exception_handler,
-    generic_exception_handler,
-    http_exception_handler,
-    sqlalchemy_exception_handler,
-    validation_exception_handler,
+	app_base_exception_handler,
+	generic_exception_handler,
+	http_exception_handler,
+	sqlalchemy_exception_handler,
+	validation_exception_handler,
 )
 
 

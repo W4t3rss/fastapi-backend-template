@@ -39,3 +39,19 @@ class PetReadAdmin(PetRead):
     is_deleted: bool
 
 
+class PetPageResponse(BaseResponse):
+    items: list[PetRead]
+    total: int
+    page: int
+    pages: int
+    limit: int
+
+
+class PetAdminPageResponse(BaseResponse):
+    items: list[PetReadAdmin]
+    total: int
+    page: int
+    pages: int
+    limit: int
+
+

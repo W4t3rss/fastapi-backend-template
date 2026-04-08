@@ -54,3 +54,11 @@ class UserReadAdmin(UserRead):
     is_deleted: bool
     # code: str | None
     # code_expire_time: datetime | None
+
+
+class UserPageResponse(BaseResponse):
+    items: list[UserReadAdmin]
+    total: int
+    page: int
+    pages: int
+    limit: int

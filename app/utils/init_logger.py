@@ -1,4 +1,5 @@
 
+import re
 import sys
 import os
 from loguru import logger
@@ -39,4 +40,6 @@ def init_logger(level: str | None = None) -> None:
         encoding="utf-8",
         enqueue=True,
     )
+
+    return logger
 

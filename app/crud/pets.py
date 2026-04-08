@@ -64,6 +64,47 @@ async def get_pet_by_id(db: AsyncSession, pet_id: int) -> Pets | None:
     return pet
 
 
+async def  get_pets_by_owner_id(db: AsyncSession, owner_id: int, skip: int = 0) -> dict:
+    """
+    根据主人ID获取宠物列表
+    param db: 数据库会话
+    param owner_id: 主人ID
+    param skip: 跳过的记录数
+    return: 包含宠物列表和分页信息的字典
+    """
+    skip = skip if skip >= 0 else 0
+    limit = db_cfg.LIMIT
+
+    result = await db.execute(
+        select(Pets)
+        .where(
+            Pets.owner_id == owner_id, 
+            Pets.is_deleted == False
+        )
+        .offset(skip)
+        .limit(limit)
+        .order_by(Pets.id)
+    )
+    pets = result.scalars().all()
+
+    count_result = await db.execute(
+        select(func.count(Pets.id))
+        .where(
+            Pets.owner_id == owner_id,
+            Pets.is_deleted == False
+        )
+    )
+    total = count_result.scalar()
+
+    return {
+        "items": [pet for pet in pets],
+        "total": total,
+        "page": (skip // limit) + 1,
+        "pages": max(1, (total + limit - 1) // limit),
+        "limit": limit
+    }
+
+
 async def get_pet_by_pet_name_and_owner_id(db: AsyncSession, pet_name: str, owner_id: int) -> Pets | None:
     """
     根据宠物名称和主人ID获取宠物

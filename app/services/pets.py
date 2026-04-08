@@ -86,6 +86,20 @@ async def get_pet_by_id_service(db: AsyncSession, pet_id: int) -> Pets:
     return pet
 
 
+async def get_pets_by_owner_id_service(db: AsyncSession, owner_id: int, skip: int = 0) -> dict:
+    user = await get_user_by_id(db, owner_id)
+    if not user:
+        logger.warning("Get pets by owner id failed: owner not found, owner_id={}", owner_id)
+        raise UserNotFoundException()
+    result = await get_pets_by_owner_id(db, owner_id, skip)
+    logger.info(
+        "Pets fetched by owner id: owner_id={}, total={}",
+        owner_id,
+        result.get("total"),
+    )
+    return result
+
+
 async def get_pet_by_pet_name_and_owner_id_service(db: AsyncSession, pet_name: str, owner_id: int) -> Pets:
     user = await get_user_by_id(db, owner_id)
     if not user:
@@ -101,6 +115,17 @@ async def get_pet_by_pet_name_and_owner_id_service(db: AsyncSession, pet_name: s
         raise PetNotFoundException()
     logger.info("Pet fetched by name: pet_id={}, owner_id={}, pet_name={}", pet.id, pet.owner_id, pet.pet_name)
     return pet
+
+
+async def get_all_pets_service(db: AsyncSession, skip: int = 0) -> dict:
+    result = await get_all_pets(db, skip)
+    logger.info(
+        "Pets listed: total={}, page={}, limit={}",
+        result.get("total"),
+        result.get("page"),
+        result.get("limit"),
+    )
+    return result
 
 
 # Update

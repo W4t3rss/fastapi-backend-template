@@ -23,8 +23,10 @@ __all__ = [
     "UserCreate",
     "UserCreateAdmin",
     "UserUpdate",
+    "UserUpdateAdmin",
     "UserRead",
     "UserReadAdmin",
+    "UserPageResponse",
 
     "PetBase",
     "PetCreate",
@@ -33,4 +35,6 @@ __all__ = [
     "PetUpdateAdmin",
     "PetRead",
     "PetReadAdmin",
+    "PetPageResponse",
+    "PetAdminPageResponse",
 ]

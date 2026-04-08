@@ -18,6 +18,7 @@ __all__ = [
     # Pet
     "create_pet",
     "get_pet_by_id",
+    "get_pets_by_owner_id",
     "get_pet_by_pet_name_and_owner_id",
     "get_all_pets",
     "update_pet",

@@ -108,9 +108,9 @@ async def get_user_by_phone_number_service(db: AsyncSession, phone_number: str) 
     return user
 
 
-async def get_all_users_service(db: AsyncSession) -> dict:
+async def get_all_users_service(db: AsyncSession, skip: int = 0) -> dict:
     """获取所有用户（带分页）"""
-    result = await get_all_users(db)
+    result = await get_all_users(db, skip)
     logger.info(
         "Users listed: total={}, page={}, limit={}",
         result.get("total"),
