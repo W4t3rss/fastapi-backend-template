@@ -5,7 +5,6 @@ from app.core.config import get_db_cfg
 db_cfg = get_db_cfg()
 
 
-# 创建异步数据库引擎和会话工厂
 engine: AsyncEngine = create_async_engine(
 	db_cfg.DB_URL,
 	echo=db_cfg.DB_ECHO,

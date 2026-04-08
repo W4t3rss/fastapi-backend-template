@@ -18,10 +18,6 @@ if config.config_file_name is not None:
 
 
 def run_migrations_offline() -> None:
-    """
-    离线模式：
-    不真正连接数据库，只根据 URL 生成 SQL / 执行迁移上下文。
-    """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -37,11 +33,6 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection) -> None:
-    """
-    真正执行迁移的同步部分。
-    Alembic 的迁移上下文仍然是同步配置方式，
-    即使外层用的是异步 engine。
-    """
     context.configure(
         connection=connection,
         target_metadata=target_metadata,
@@ -54,26 +45,21 @@ def do_run_migrations(connection) -> None:
 
 
 async def run_async_migrations() -> None:
-    """
-    在线模式：
-    使用异步 engine 连接数据库，再交给 Alembic 执行迁移。
-    """
     connectable = async_engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
-
     async with connectable.connect() as connection:
         await connection.run_sync(do_run_migrations)
-
     await connectable.dispose()
 
 
 def run_migrations_online() -> None:
     asyncio.run(run_async_migrations())
+    
 
-
+# 根据运行模式选择迁移方式
 if context.is_offline_mode():
     run_migrations_offline()
 else:

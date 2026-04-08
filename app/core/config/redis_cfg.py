@@ -9,8 +9,8 @@ class RedisCfg(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
     )
-
-    REDIS_URL: str = "redis://:520831@localhost:6379/0"
+    
+    REDIS_URL: str = ""
     REDIS_DECODE_RESPONSES: bool = True
 
 

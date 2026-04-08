@@ -1,4 +1,6 @@
 
+from dataclasses import dataclass
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.exceptions.base import AppBaseException
 from app.models.users import Users
@@ -11,20 +13,18 @@ from app.core.lifespan import logger
 
 # Create
 async def create_user_service(db: AsyncSession, user_create: UserCreate) -> Users:
-    """创建普通用户"""
     try:
         # 校验
         if await get_user_by_user_name(db, user_create.user_name):
-            logger.warning("Create user failed: user_name already exists, user_name={}", user_create.user_name)
+            logger.warning("Create user failed: username already exists, user_name={}", user_create.user_name)
             raise UsernameAlreadyExistsException()
         
         if user_create.phone_number and await get_user_by_phone_number(db, user_create.phone_number):
-            logger.warning("Create user failed: phone_number already exists, phone_number={}", user_create.phone_number)
+            logger.warning("Create user failed: phone number already exists, phone_number={}", user_create.phone_number)
             raise PhoneAlreadyExistsException()
         
         # 业务逻辑处理
         hashed_password = create_password_hash(user_create.password)
-        # 创建一个新的UserCreate对象，替换原始密码为哈希后的密码
         user_create_hashed = user_create.model_copy(update={"password": hashed_password})  
 
         # 数据库写入
@@ -32,7 +32,7 @@ async def create_user_service(db: AsyncSession, user_create: UserCreate) -> User
         await db.commit()
 
         logger.info(
-            f"User created: id={user.id}, user_name={user.user_name}, phone_number={user.phone_number}"
+            f"User created successfully: id={user.id}, user_name={user.user_name}, phone_number={user.phone_number}"
         )
         return user
 
@@ -41,20 +41,19 @@ async def create_user_service(db: AsyncSession, user_create: UserCreate) -> User
         raise 
     except Exception as e:
         await db.rollback()
-        logger.exception("Unexpected error during user creation: {}", e)
+        logger.exception("Unexpected error: {}", e)
         raise
 
 
 async def create_user_admin_service(db: AsyncSession, user_create: UserCreateAdmin) -> Users:
-    """创建管理员用户"""
     try:
         # 校验
         if await get_user_by_user_name(db, user_create.user_name):
-            logger.warning("Create admin user failed: user_name already exists, user_name={}", user_create.user_name)
+            logger.warning("Create admin user failed: username already exists, user_name={}", user_create.user_name)
             raise UsernameAlreadyExistsException()
         
         if user_create.phone_number and await get_user_by_phone_number(db, user_create.phone_number):
-            logger.warning("Create admin user failed: phone_number already exists, phone_number={}", user_create.phone_number)
+            logger.warning("Create admin user failed: phone number already exists, phone_number={}", user_create.phone_number)
             raise PhoneAlreadyExistsException()
         
         hashed_password = create_password_hash(user_create.password)
@@ -64,7 +63,7 @@ async def create_user_admin_service(db: AsyncSession, user_create: UserCreateAdm
         await db.commit()
 
         logger.info(
-            f"Admin user created: id={user.id}, user_name={user.user_name}, phone_number={user.phone_number}"
+            f"Admin user created successfully: id={user.id}, user_name={user.user_name}, phone_number={user.phone_number}"
         )
         return user
 
@@ -73,43 +72,46 @@ async def create_user_admin_service(db: AsyncSession, user_create: UserCreateAdm
         raise 
     except Exception as e:
         await db.rollback()
-        logger.exception("Unexpected error during admin user creation: {}", e)
+        logger.exception("Unexpected error: {}", e)
         raise
 
 
 # Read
 async def get_user_by_id_service(db: AsyncSession, user_id: int) -> Users:
-    """根据ID获取用户"""
     user = await get_user_by_id(db, user_id)
     if user is None:
-        logger.warning("Get user by id failed: user not found, user_id={}", user_id)
+        logger.warning("Get user by ID failed: user not found, user_id={}", user_id)
         raise UserNotFoundException()
-    logger.info("User fetched by id: user_id={}, user_name={}", user.id, user.user_name)
+    logger.info("Get user by ID succeeded: user_id={}, user_name={}", user.id, user.user_name)
     return user
 
 
 async def get_user_by_user_name_service(db: AsyncSession, user_name: str) -> Users:
-    """根据用户名获取用户"""
     user = await get_user_by_user_name(db, user_name)
     if user is None:
-        logger.warning("Get user by user_name failed: user not found, user_name={}", user_name)
+        logger.warning("Get user by username failed: user not found, user_name={}", user_name)
         raise UserNotFoundException()
-    logger.info("User fetched by user_name: user_id={}, user_name={}", user.id, user.user_name)
+    logger.info("Get user by username succeeded: user_id={}, user_name={}", user.id, user.user_name)
     return user
 
 
 async def get_user_by_phone_number_service(db: AsyncSession, phone_number: str) -> Users:
-    """根据手机号获取用户"""
     user = await get_user_by_phone_number(db, phone_number)
     if user is None:
-        logger.warning("Get user by phone_number failed: user not found, phone_number={}", phone_number)
+        logger.warning("Get user by phone number failed: user not found, phone_number={}", phone_number)
         raise UserNotFoundException()
-    logger.info("User fetched by phone_number: user_id={}, phone_number={}", user.id, user.phone_number)
+    logger.info("Get user by phone number succeeded: user_id={}, phone_number={}", user.id, user.phone_number)
     return user
 
 
-async def get_all_users_service(db: AsyncSession, skip: int = 0) -> dict:
-    """获取所有用户（带分页）"""
+@dataclass
+class UserListResponse:
+    users: list[Users]
+    total: int
+    page: int
+    limit: int
+
+async def get_all_users_service(db: AsyncSession, skip: int = 0) -> UserListResponse:
     result = await get_all_users(db, skip)
     logger.info(
         "Users listed: total={}, page={}, limit={}",
@@ -117,12 +119,11 @@ async def get_all_users_service(db: AsyncSession, skip: int = 0) -> dict:
         result.get("page"),
         result.get("limit"),
     )
-    return result
+    return UserListResponse(**result)
 
 
 # Update
 async def update_user_service(db: AsyncSession, user_id: int, user_update: UserUpdate) -> Users:
-    """更新普通用户"""
     try:
         user = await get_user_by_id(db, user_id)
         if user is None:

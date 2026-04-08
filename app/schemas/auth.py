@@ -13,10 +13,10 @@ class Token(BaseResponse):
 
 class RegisterRequest(BaseRequest):
     user_name: str = Field(..., min_length=2, max_length=50, description="Username")
-    phone_number: str = Field(..., max_length=20, description="User's phone number")
-    password: str = Field(..., min_length=6, max_length=128, description="Password")
-    confirm_password: str = Field(..., min_length=6, max_length=128, description="Confirm Password")
-    code: str = Field(..., min_length=4, max_length=20, description="Verification Code")
+    phone_number: str = Field(..., max_length=20, description="Phone number")
+    password: str = Field(..., min_length=6, max_length=128, description="User password")
+    confirm_password: str = Field(..., min_length=6, max_length=128, description="Confirm password")
+    code: str = Field(..., min_length=4, max_length=20, description="Verification code")
 
     @field_validator("phone_number")
     @classmethod
@@ -42,7 +42,7 @@ class RegisterResponse(BaseResponse):
 # Login
 class LoginRequest(BaseRequest):
     user_name: str = Field(..., min_length=2, max_length=50, description="Username")
-    password: str = Field(..., min_length=6, max_length=128, description="Password")  
+    password: str = Field(..., min_length=6, max_length=128, description="User password")  
 
 class LoginResponse(Token):
     id: int
@@ -50,12 +50,11 @@ class LoginResponse(Token):
     message: str = "Login successful"
 
 
-# Forgot Password
+# Send Code
 class SendCodeRequest(BaseRequest):
-    phone_number: str = Field(..., max_length=20, description="User's phone number")
-    scene:Literal["register", "reset_password"] = Field(..., description="Verification code scene, either 'register' or 'reset_password'")
-    return_code: bool | None = Field(default=None, description="Whether to return the code in the response, overrides config")
-
+    phone_number: str = Field(..., max_length=20, description="Phone number")
+    scene:Literal["register", "reset_password"] = Field(..., description="Verification code scenario: 'register' for registration, 'reset_password' for password reset")
+    return_code: bool | None = Field(default=None, description="Whether to return the verification code in the response. For testing only; do not use in production")
 
     @field_validator("phone_number")
     @classmethod
@@ -64,15 +63,16 @@ class SendCodeRequest(BaseRequest):
 
 
 class SendCodeResponse(BaseResponse):
-    code: str | None = Field(default=None, description="Verification code, only returned if RETURN_CODE is True in config")
+    code: str | None = Field(default=None, description="Verification code. Returned only in testing when return_code is true")
     message: str = "Verification code sent"
 
 
+# Reset Password
 class ResetPasswordRequest(BaseRequest):
-    phone_number: str | None = Field(default=None, max_length=20, description="User's phone number")
-    new_password: str = Field(..., min_length=6, max_length=128, description="New Password")
-    confirm_password: str = Field(..., min_length=6, max_length=128, description="Confirm New Password")
-    code: str = Field(..., min_length=4, max_length=20, description="Verification Code")
+    phone_number: str | None = Field(default=None, max_length=20, description="Phone number")
+    new_password: str = Field(..., min_length=6, max_length=128, description="New password")
+    confirm_password: str = Field(..., min_length=6, max_length=128, description="Confirm new password")
+    code: str = Field(..., min_length=4, max_length=20, description="Verification code")
 
     @field_validator("phone_number")
     @classmethod    

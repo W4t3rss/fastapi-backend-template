@@ -20,17 +20,16 @@ from app.services.auth import (
     reset_password_service,
     send_code_service,
 )
-
-
 security_cfg = get_security_cfg()
 auth_router = APIRouter()
 
 
+# app/api/v1/auth/send-code
 @auth_router.post(
     "/send-code",
     response_model=SendCodeResponse,
     status_code=status.HTTP_200_OK,
-    summary="发送验证码",
+    summary="Send verification code",
 )
 async def send_code(
     send_code: SendCodeRequest,
@@ -44,11 +43,12 @@ async def send_code(
     )
 
 
+# app/api/v1/auth/register
 @auth_router.post(
     "/register",
     response_model=RegisterResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="用户注册",
+    summary="User registration",
 )
 async def register(
     register: RegisterRequest,
@@ -59,11 +59,12 @@ async def register(
     return RegisterResponse.model_validate(result)
 
 
+# app/api/v1/auth/login
 @auth_router.post(
     "/login",
     response_model=LoginResponse,
     status_code=status.HTTP_200_OK,
-    summary="用户登录",
+    summary="User login",
 )
 async def login(
     login: LoginRequest,
@@ -73,11 +74,12 @@ async def login(
     return LoginResponse.model_validate(result)
 
 
+# app/api/v1/auth/reset-password
 @auth_router.post(
     "/reset-password",
     response_model=ResetPasswordResponse,
     status_code=status.HTTP_200_OK,
-    summary="重置密码",
+    summary="Reset password",
 )
 async def reset_password(
     reset: ResetPasswordRequest,

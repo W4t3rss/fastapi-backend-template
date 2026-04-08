@@ -10,15 +10,12 @@ class Users(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, init=False)
-    role: Mapped[int] = mapped_column(Integer, nullable=False, default=0)  # 0: 普通用户, 1: 管理员
+
+    role: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     user_name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True, index=True)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
     phone_number: Mapped[Optional[str]] = mapped_column(String(20), nullable=True, unique=True, index=True)
-
-    # 不应该在数据库模型中存储验证码和过期时间，这些应该放在 Redis 或其他缓存中
-    # code: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
-    # code_expire_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
-
+    
     is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True, init=False)
     create_time: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

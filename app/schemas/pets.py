@@ -6,7 +6,7 @@ from .base import BaseRequest, BaseResponse
 
 # Base
 class PetBase(BaseRequest):
-    pet_name: str = Field(..., min_length=1, max_length=50, description="Pet's name")
+    pet_name: str = Field(..., min_length=1, max_length=50, description="Pet name")
 
 
 # Create
@@ -14,16 +14,16 @@ class PetCreate(PetBase):
     pass
 
 class PetCreateAdmin(PetBase):
-    owner_id: int = Field(..., description="ID of the pet's owner")
+    owner_id: int = Field(..., description="Pet owner's ID")
 
 
 # Update
 class PetUpdate(BaseRequest):
-    pet_name: str | None = Field(default=None, min_length=1, max_length=50, description="Pet's name")
+    pet_name: str | None = Field(default=None, min_length=1, max_length=50, description="Pet name")
 
 
 class PetUpdateAdmin(PetUpdate):
-    owner_id: int | None = Field(default=None, description="ID of the pet's owner")
+    owner_id: int | None = Field(default=None, description="Pet owner's ID")
 
 
 # Read
@@ -37,21 +37,5 @@ class PetRead(BaseResponse):
 class PetReadAdmin(PetRead):
     owner_id: int
     is_deleted: bool
-
-
-class PetPageResponse(BaseResponse):
-    items: list[PetRead]
-    total: int
-    page: int
-    pages: int
-    limit: int
-
-
-class PetAdminPageResponse(BaseResponse):
-    items: list[PetReadAdmin]
-    total: int
-    page: int
-    pages: int
-    limit: int
 
 

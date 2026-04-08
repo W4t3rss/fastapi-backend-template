@@ -11,12 +11,6 @@ db_cfg = get_db_cfg()
 
 # Create
 async def create_pet(db: AsyncSession, pet_create: PetCreate) -> Pets:
-    """
-    创建宠物
-    param db: 数据库会话
-    param pet_create: 宠物创建数据
-    return: 创建的宠物数据
-    """
     pet = Pets(
         pet_name=pet_create.pet_name
     )
@@ -27,12 +21,6 @@ async def create_pet(db: AsyncSession, pet_create: PetCreate) -> Pets:
 
 
 async def create_pet_admin(db: AsyncSession, pet_create: PetCreateAdmin) -> Pets:
-    """
-    创建宠物（管理员）
-    param db: 数据库会话
-    param pet_create: 宠物创建数据
-    return: 创建的宠物数据
-    """
     pet = Pets(
         pet_name=pet_create.pet_name,
         owner_id=pet_create.owner_id
@@ -45,12 +33,6 @@ async def create_pet_admin(db: AsyncSession, pet_create: PetCreateAdmin) -> Pets
 
 # Read
 async def get_pet_by_id(db: AsyncSession, pet_id: int) -> Pets | None:
-    """
-    根据ID获取宠物
-    param db: 数据库会话
-    param pet_id: 宠物ID
-    return: 宠物数据
-    """
     result = await db.execute(
         select(Pets)
         .where(
@@ -65,13 +47,6 @@ async def get_pet_by_id(db: AsyncSession, pet_id: int) -> Pets | None:
 
 
 async def  get_pets_by_owner_id(db: AsyncSession, owner_id: int, skip: int = 0) -> dict:
-    """
-    根据主人ID获取宠物列表
-    param db: 数据库会话
-    param owner_id: 主人ID
-    param skip: 跳过的记录数
-    return: 包含宠物列表和分页信息的字典
-    """
     skip = skip if skip >= 0 else 0
     limit = db_cfg.LIMIT
 
@@ -106,13 +81,6 @@ async def  get_pets_by_owner_id(db: AsyncSession, owner_id: int, skip: int = 0) 
 
 
 async def get_pet_by_pet_name_and_owner_id(db: AsyncSession, pet_name: str, owner_id: int) -> Pets | None:
-    """
-    根据宠物名称和主人ID获取宠物
-    param db: 数据库会话
-    param pet_name: 宠物名称
-    param owner_id: 主人ID
-    return: 宠物数据
-    """
     result = await db.execute(
         select(Pets)
         .where(
@@ -128,12 +96,6 @@ async def get_pet_by_pet_name_and_owner_id(db: AsyncSession, pet_name: str, owne
 
 
 async def get_all_pets(db: AsyncSession, skip: int=0) -> dict:
-    """
-    获取所有宠物
-    param db: 数据库会话
-    param skip: 跳过的记录数
-    return: 包含宠物列表和分页信息的字典
-    """
     skip = skip if skip >= 0 else 0
     limit = db_cfg.LIMIT
 
@@ -162,12 +124,6 @@ async def get_all_pets(db: AsyncSession, skip: int=0) -> dict:
 
 # Update
 async def update_pet(db: AsyncSession, pet_id: int, pet_update: PetUpdate) -> Pets | None:
-    """
-    更新宠物信息
-    param db: 数据库会话
-    param pet_update: 宠物更新数据
-    return: 更新后的宠物数据
-    """
     result = await db.execute(
         select(Pets)
         .where(
@@ -188,12 +144,6 @@ async def update_pet(db: AsyncSession, pet_id: int, pet_update: PetUpdate) -> Pe
 
 
 async def update_pet_admin(db: AsyncSession, pet_id: int, pet_update: PetUpdateAdmin) -> Pets | None:
-    """
-    更新宠物信息（管理员）
-    param db: 数据库会话
-    param pet_update: 宠物更新数据
-    return: 更新后的宠物数据
-    """
     result = await db.execute(
         select(Pets)
         .where(
@@ -218,12 +168,6 @@ async def update_pet_admin(db: AsyncSession, pet_id: int, pet_update: PetUpdateA
 
 # Delete
 async def delete_pet(db: AsyncSession, pet_id: int) -> Pets | None:
-    """
-    软删除宠物
-    param db: 数据库会话
-    param pet_id: 宠物ID
-    return: 删除的宠物数据
-    """
     result = await db.execute(
         select(Pets)
         .where(

@@ -29,16 +29,15 @@ from app.services.users import (
     get_user_by_id_service,
     update_user_admin_service,
 )
-
-
 admini_router = APIRouter()
 
 
+# app/api/v1/admin/users
 @admini_router.post(
     "/users",
     response_model=UserReadAdmin,
     status_code=status.HTTP_201_CREATED,
-    summary="管理员创建用户",
+    summary="Admin creates a user",
 )
 async def create_user_by_admin(
     user_create: UserCreateAdmin,
@@ -49,14 +48,15 @@ async def create_user_by_admin(
     return UserReadAdmin.model_validate(user)
 
 
+# app/api/v1/admin/users
 @admini_router.get(
     "/users",
     response_model=UserPageResponse,
     status_code=status.HTTP_200_OK,
-    summary="管理员获取用户列表",
+    summary="Admin gets user list",
 )
 async def get_users_by_admin(
-    skip: int = Query(default=0, ge=0, description="分页偏移量"),
+    skip: int = Query(default=0, ge=0, description="Pagination offset"),
     db: AsyncSession = Depends(get_db),
     current_admin: Users = Depends(get_current_admin),
 ) -> UserPageResponse:
@@ -64,11 +64,12 @@ async def get_users_by_admin(
     return UserPageResponse.model_validate(result)
 
 
+# app/api/v1/admin/users/{user_id}
 @admini_router.get(
     "/users/{user_id}",
     response_model=UserReadAdmin,
     status_code=status.HTTP_200_OK,
-    summary="管理员获取单个用户",
+    summary="Admin gets a single user",
 )
 async def get_user_by_admin(
     user_id: int,
@@ -79,11 +80,12 @@ async def get_user_by_admin(
     return UserReadAdmin.model_validate(user)
 
 
+# app/api/v1/admin/users/{user_id}
 @admini_router.patch(
     "/users/{user_id}",
     response_model=UserReadAdmin,
     status_code=status.HTTP_200_OK,
-    summary="管理员更新用户",
+    summary="Admin updates a user",
 )
 async def update_user_by_admin(
     user_id: int,
@@ -95,10 +97,11 @@ async def update_user_by_admin(
     return UserReadAdmin.model_validate(user)
 
 
+# app/api/v1/admin/users/{user_id}
 @admini_router.delete(
     "/users/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    summary="管理员删除用户",
+    summary="Admin deletes a user",
 )
 async def delete_user_by_admin(
     user_id: int,
@@ -108,11 +111,12 @@ async def delete_user_by_admin(
     await delete_user_service(db, user_id, current_admin.id)
 
 
+# app/api/v1/admin/pets
 @admini_router.post(
     "/pets",
     response_model=PetReadAdmin,
     status_code=status.HTTP_201_CREATED,
-    summary="管理员创建宠物",
+    summary="Admin creates a pet",
 )
 async def create_pet_by_admin(
     pet_create: PetCreateAdmin,
@@ -123,14 +127,15 @@ async def create_pet_by_admin(
     return PetReadAdmin.model_validate(pet)
 
 
+# app/api/v1/admin/pets
 @admini_router.get(
     "/pets",
     response_model=PetAdminPageResponse,
     status_code=status.HTTP_200_OK,
-    summary="管理员获取宠物列表",
+    summary="Admin gets pet list",
 )
 async def get_pets_by_admin(
-    skip: int = Query(default=0, ge=0, description="分页偏移量"),
+    skip: int = Query(default=0, ge=0, description="Pagination offset"),
     db: AsyncSession = Depends(get_db),
     current_admin: Users = Depends(get_current_admin),
 ) -> PetAdminPageResponse:
@@ -138,11 +143,12 @@ async def get_pets_by_admin(
     return PetAdminPageResponse.model_validate(result)
 
 
+# app/api/v1/admin/pets/{pet_id}
 @admini_router.get(
     "/pets/{pet_id}",
     response_model=PetReadAdmin,
     status_code=status.HTTP_200_OK,
-    summary="管理员获取单个宠物",
+    summary="Admin gets a single pet",
 )
 async def get_pet_by_admin(
     pet_id: int,
@@ -153,11 +159,12 @@ async def get_pet_by_admin(
     return PetReadAdmin.model_validate(pet)
 
 
+# app/api/v1/admin/pets/{pet_id}
 @admini_router.patch(
     "/pets/{pet_id}",
     response_model=PetReadAdmin,
     status_code=status.HTTP_200_OK,
-    summary="管理员更新宠物",
+    summary="Admin updates a pet",
 )
 async def update_pet_by_admin(
     pet_id: int,
@@ -169,10 +176,11 @@ async def update_pet_by_admin(
     return PetReadAdmin.model_validate(pet)
 
 
+# app/api/v1/admin/pets/{pet_id}
 @admini_router.delete(
     "/pets/{pet_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    summary="管理员删除宠物",
+    summary="Admin deletes a pet",
 )
 async def delete_pet_by_admin(
     pet_id: int,

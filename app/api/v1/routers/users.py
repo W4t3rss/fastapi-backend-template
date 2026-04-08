@@ -8,11 +8,12 @@ from app.services.users import update_user_service
 user_router = APIRouter()
 
 
+# app/api/v1/users/me
 @user_router.get(
     "/me",
     response_model=UserRead,
     status_code=status.HTTP_200_OK,
-    summary="获取当前用户信息",
+    summary="Get current user profile",
 )
 async def get_me(
     current_user: Users = Depends(get_current_user),
@@ -20,11 +21,12 @@ async def get_me(
     return UserRead.model_validate(current_user)
 
 
+# app/api/v1/users/me
 @user_router.patch(
     "/me",
     response_model=UserRead,
     status_code=status.HTTP_200_OK,
-    summary="更新当前用户信息",
+    summary="Update current user profile",
 )
 async def update_me(
     user_update: UserUpdate,
