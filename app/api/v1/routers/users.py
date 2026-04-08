@@ -1,6 +1,5 @@
 
 from typing import Annotated
-
 from fastapi import APIRouter, Body, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.deps import get_current_user, get_db

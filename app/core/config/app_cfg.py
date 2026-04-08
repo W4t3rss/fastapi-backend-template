@@ -10,9 +10,9 @@ class AppCfg(BaseSettings):
         extra="ignore",
     )
 
-    APP_NAME: str = "Pet System API"
+    APP_NAME: str = "fastapi-backend-template"
     APP_VERSION: str = "1.0.0"
-    APP_DESCRIPTION: str = "FastAPI backend for pet system"
+    APP_DESCRIPTION: str = "A reusable FastAPI backend template with authentication, admin management, and Redis verification code flow"
 
     API_V1_PREFIX: str = "/v1"
     DOCS_URL: str = "/docs"
