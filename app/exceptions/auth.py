@@ -64,3 +64,4 @@ class OldPasswordIncorrectException(BadRequestException):
     def __init__(self, message: str = "Old password is incorrect", *, details: Any | None = None) -> None:
         super().__init__(message=message, error_code=error_cfg.OLD_PASSWORD_INCORRECT, details=details)
 
+

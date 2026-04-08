@@ -28,6 +28,7 @@ __all__ = [
 
     "PetBase",
     "PetCreate",
+    "PetCreateAdmin",
     "PetUpdate",
     "PetUpdateAdmin",
     "PetRead",

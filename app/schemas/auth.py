@@ -13,7 +13,7 @@ class Token(BaseResponse):
 
 class RegisterRequest(BaseRequest):
     user_name: str = Field(..., min_length=2, max_length=50, description="Username")
-    phone_number: str | None = Field(default=None, max_length=20, description="User's phone number")
+    phone_number: str = Field(..., max_length=20, description="User's phone number")
     password: str = Field(..., min_length=6, max_length=128, description="Password")
     confirm_password: str = Field(..., min_length=6, max_length=128, description="Confirm Password")
     code: str = Field(..., min_length=4, max_length=20, description="Verification Code")
@@ -54,6 +54,7 @@ class LoginResponse(Token):
 class SendCodeRequest(BaseRequest):
     phone_number: str = Field(..., max_length=20, description="User's phone number")
     scene:Literal["register", "reset_password"] = Field(..., description="Verification code scene, either 'register' or 'reset_password'")
+    return_code: bool | None = Field(default=None, description="Whether to return the code in the response, overrides config")
 
 
     @field_validator("phone_number")
@@ -63,6 +64,7 @@ class SendCodeRequest(BaseRequest):
 
 
 class SendCodeResponse(BaseResponse):
+    code: str | None = Field(default=None, description="Verification code, only returned if RETURN_CODE is True in config")
     message: str = "Verification code sent"
 
 

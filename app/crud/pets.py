@@ -1,7 +1,7 @@
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.pets import Pets
-from app.schemas.pets import (PetCreate,
+from app.schemas.pets import (PetCreate,PetCreateAdmin,
                               PetUpdate, PetUpdateAdmin
                               )
 from sqlalchemy import func, select
@@ -13,6 +13,22 @@ db_cfg = get_db_cfg()
 async def create_pet(db: AsyncSession, pet_create: PetCreate) -> Pets:
     """
     创建宠物
+    param db: 数据库会话
+    param pet_create: 宠物创建数据
+    return: 创建的宠物数据
+    """
+    pet = Pets(
+        pet_name=pet_create.pet_name
+    )
+    db.add(pet)
+    await db.flush()
+    await db.refresh(pet)
+    return pet
+
+
+async def create_pet_admin(db: AsyncSession, pet_create: PetCreateAdmin) -> Pets:
+    """
+    创建宠物（管理员）
     param db: 数据库会话
     param pet_create: 宠物创建数据
     return: 创建的宠物数据
@@ -48,17 +64,19 @@ async def get_pet_by_id(db: AsyncSession, pet_id: int) -> Pets | None:
     return pet
 
 
-async def get_pet_by_pet_name(db: AsyncSession, pet_name: str) -> Pets | None:
+async def get_pet_by_pet_name_and_owner_id(db: AsyncSession, pet_name: str, owner_id: int) -> Pets | None:
     """
-    根据宠物名称获取宠物
+    根据宠物名称和主人ID获取宠物
     param db: 数据库会话
     param pet_name: 宠物名称
+    param owner_id: 主人ID
     return: 宠物数据
     """
     result = await db.execute(
         select(Pets)
         .where(
             Pets.pet_name == pet_name, 
+            Pets.owner_id == owner_id,
             Pets.is_deleted == False
         )
     )

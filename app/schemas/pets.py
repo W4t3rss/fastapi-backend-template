@@ -11,6 +11,9 @@ class PetBase(BaseRequest):
 
 # Create
 class PetCreate(PetBase):
+    pass
+
+class PetCreateAdmin(PetBase):
     owner_id: int = Field(..., description="ID of the pet's owner")
 
 
@@ -26,13 +29,13 @@ class PetUpdateAdmin(PetUpdate):
 # Read
 class PetRead(BaseResponse):
     id: int
-    owner_id: int
     pet_name: str
     create_time: datetime
     update_time: datetime
 
 
 class PetReadAdmin(PetRead):
+    owner_id: int
     is_deleted: bool
 
 

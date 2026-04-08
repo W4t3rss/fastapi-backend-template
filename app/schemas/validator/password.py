@@ -8,5 +8,5 @@ def validate_password(password: str, confirm_password: str) -> str:
     :raises ValueError: 如果密码和确认密码不匹配
     """
     if password != confirm_password:
-        raise ValueError("新密码和确认新密码不匹配")
+        raise ValueError("Password and confirm password do not match")
     return password
