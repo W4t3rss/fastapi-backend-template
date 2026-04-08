@@ -1,6 +1,6 @@
 
 from datetime import datetime
-from pydantic import Field
+from pydantic import ConfigDict, Field
 from .base import BaseRequest, BaseResponse
 
 
@@ -11,18 +11,48 @@ class PetBase(BaseRequest):
 
 # Create
 class PetCreate(PetBase):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "pet_name": "Buddy"
+            }
+        }
+    )
     pass
 
 class PetCreateAdmin(PetBase):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "owner_id": 1,
+                "pet_name": "Buddy",
+            }
+        }
+    )
     owner_id: int = Field(..., description="ID of the pet's owner")
 
 
 # Update
 class PetUpdate(BaseRequest):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "pet_name": "Buddy Jr."
+            }
+        }
+    )
     pet_name: str | None = Field(default=None, min_length=1, max_length=50, description="Pet's name")
 
 
 class PetUpdateAdmin(PetUpdate):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "pet_name": "Buddy Jr.",
+                "owner_id": 2,
+            }
+        }
+    )
     owner_id: int | None = Field(default=None, description="ID of the pet's owner")
 
 

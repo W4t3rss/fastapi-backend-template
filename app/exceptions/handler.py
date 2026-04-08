@@ -1,10 +1,18 @@
 
 from fastapi import HTTPException, Request
+from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from app.exceptions.base import AppBaseException
 from app.utils import logger
+
+
+def _json_response(status_code: int, content: dict) -> JSONResponse:
+    return JSONResponse(
+        status_code=status_code,
+        content=jsonable_encoder(content),
+    )
 
 
 # AppBaseException handler
@@ -24,19 +32,16 @@ async def app_base_exception_handler(request: Request, exc: AppBaseException) ->
             exc.details,
         )
 
-    return JSONResponse(
-        status_code=exc.http_status_code,
-        content=exc.to_dict(),
-    )
+    return _json_response(exc.http_status_code, exc.to_dict())
 
 
 # HTTPException handler
 async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
     logger.warning("HTTPException: status_code={}, detail={}", exc.status_code, exc.detail)
 
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={
+    return _json_response(
+        exc.status_code,
+        {
             "error_code": "HTTP_ERROR",
             "message": exc.detail,
             "details": None,
@@ -48,9 +53,9 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
 async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
     logger.warning("RequestValidationError: {}", exc.errors())
 
-    return JSONResponse(
-        status_code=422,
-        content={
+    return _json_response(
+        422,
+        {
             "error_code": "VALIDATION_ERROR",
             "message": "Validation error occurred.",
             "details": exc.errors(),
@@ -62,9 +67,9 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 async def sqlalchemy_exception_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse:
     logger.exception("SQLAlchemyError: {}", exc)
 
-    return JSONResponse(
-        status_code=500,
-        content={
+    return _json_response(
+        500,
+        {
             "error_code": "DATABASE_ERROR",
             "message": "A database error occurred.",
             "details": None,
@@ -76,9 +81,9 @@ async def sqlalchemy_exception_handler(request: Request, exc: SQLAlchemyError) -
 async def generic_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     logger.exception("Unhandled exception: {}", exc)
 
-    return JSONResponse(
-        status_code=500,
-        content={
+    return _json_response(
+        500,
+        {
             "error_code": "INTERNAL_SERVER_ERROR",
             "message": "An unexpected error occurred.",
             "details": None,

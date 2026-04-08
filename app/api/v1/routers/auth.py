@@ -1,5 +1,6 @@
 
 from fastapi import APIRouter, Depends, status
+from fastapi.security import OAuth2PasswordRequestForm
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_security_cfg
@@ -70,6 +71,25 @@ async def login(
     login: LoginRequest,
     db: AsyncSession = Depends(get_db),
 ) -> LoginResponse:
+    result = await login_service(db, login)
+    return LoginResponse.model_validate(result)
+
+
+# app/api/v1/auth/token
+@auth_router.post(
+    "/token",
+    response_model=LoginResponse,
+    status_code=status.HTTP_200_OK,
+    summary="OAuth2 password login",
+)
+async def issue_token(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: AsyncSession = Depends(get_db),
+) -> LoginResponse:
+    login = LoginRequest(
+        user_name=form_data.username,
+        password=form_data.password,
+    )
     result = await login_service(db, login)
     return LoginResponse.model_validate(result)
 

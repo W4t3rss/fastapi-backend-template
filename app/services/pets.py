@@ -86,6 +86,21 @@ async def get_pet_by_id_service(db: AsyncSession, pet_id: int) -> Pets:
     return pet
 
 
+async def get_pet_by_id_admin_service(db: AsyncSession, pet_id: int) -> Pets:
+    pet = await get_pet_by_id_including_deleted(db, pet_id)
+    if not pet:
+        logger.warning("Admin get pet by id failed: pet not found, pet_id={}", pet_id)
+        raise PetNotFoundException()
+    logger.info(
+        "Admin fetched pet by id: pet_id={}, owner_id={}, pet_name={}, is_deleted={}",
+        pet.id,
+        pet.owner_id,
+        pet.pet_name,
+        pet.is_deleted,
+    )
+    return pet
+
+
 async def get_pets_by_owner_id_service(db: AsyncSession, owner_id: int, skip: int = 0) -> dict:
     user = await get_user_by_id(db, owner_id)
     if not user:
@@ -121,6 +136,17 @@ async def get_all_pets_service(db: AsyncSession, skip: int = 0) -> dict:
     result = await get_all_pets(db, skip)
     logger.info(
         "Pets listed: total={}, page={}, limit={}",
+        result.get("total"),
+        result.get("page"),
+        result.get("limit"),
+    )
+    return result
+
+
+async def get_all_pets_admin_service(db: AsyncSession, skip: int = 0) -> dict:
+    result = await get_all_pets_including_deleted(db, skip)
+    logger.info(
+        "Admin listed pets: total={}, page={}, limit={}",
         result.get("total"),
         result.get("page"),
         result.get("limit"),
@@ -235,6 +261,50 @@ async def delete_pet_service(db: AsyncSession, pet_id: int) -> None:
     except Exception as e:
         await db.rollback()
         logger.exception("Unexpected error during pet deletion: {}", e)
+        raise
+
+
+async def restore_pet_service(db: AsyncSession, pet_id: int) -> Pets:
+    try:
+        pet = await get_pet_by_id_including_deleted(db, pet_id)
+        if not pet:
+            logger.warning("Restore pet failed: pet not found, pet_id={}", pet_id)
+            raise PetNotFoundException()
+
+        if not pet.is_deleted:
+            logger.info("Restore pet skipped: pet already active, pet_id={}, pet_name={}", pet.id, pet.pet_name)
+            return pet
+
+        existing_pet = await get_pet_by_pet_name_and_owner_id(db, pet.pet_name, pet.owner_id)
+        if existing_pet and existing_pet.id != pet_id:
+            logger.warning(
+                "Restore pet failed: pet_name already exists, pet_id={}, owner_id={}, pet_name={}",
+                pet_id,
+                pet.owner_id,
+                pet.pet_name,
+            )
+            raise PetAlreadyExistsException(message="Pet name already exists for this owner")
+
+        restored_pet = await restore_pet(db, pet_id)
+        if not restored_pet:
+            logger.warning("Restore pet failed after validation: pet not found, pet_id={}", pet_id)
+            raise PetNotFoundException()
+
+        await db.commit()
+        logger.info(
+            "Pet restored: pet_id={}, owner_id={}, pet_name={}",
+            restored_pet.id,
+            restored_pet.owner_id,
+            restored_pet.pet_name,
+        )
+        return restored_pet
+
+    except AppBaseException:
+        await db.rollback()
+        raise
+    except Exception as e:
+        await db.rollback()
+        logger.exception("Unexpected error during pet restoration: {}", e)
         raise
 
 

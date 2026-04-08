@@ -1,24 +1,17 @@
-
 from .auth import *
+from .handler import *
 from .pets import *
 from .users import *
-from .handler import *
 
 
 __all__ = [
-
-    # User
     "UserNotFoundException",
     "UsernameAlreadyExistsException",
     "PhoneAlreadyExistsException",
     "CannotDeleteSelfException",
-
-    # Pet
     "PetNotFoundException",
     "OwnerNotFoundException",
-    "PetAlreadyExistsException",   
-
-    # Auth
+    "PetAlreadyExistsException",
     "InvalidCredentialsException",
     "TokenInvalidException",
     "TokenExpiredException",
@@ -26,15 +19,13 @@ __all__ = [
     "CodeInvalidException",
     "CodeExpiredException",
     "CodeSendTooFrequentlyException",
+    "VerificationCodeServiceUnavailableException",
     "PhoneNotRegisteredException",
     "PhoneNotVerifiedException",
     "OldPasswordIncorrectException",
-
-
-    # Handler
-    "app_base_exception_handler", 
+    "app_base_exception_handler",
     "http_exception_handler",
     "validation_exception_handler",
     "sqlalchemy_exception_handler",
-    "generic_exception_handler"
+    "generic_exception_handler",
 ]

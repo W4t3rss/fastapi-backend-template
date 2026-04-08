@@ -46,6 +46,17 @@ async def get_pet_by_id(db: AsyncSession, pet_id: int) -> Pets | None:
     return pet
 
 
+async def get_pet_by_id_including_deleted(db: AsyncSession, pet_id: int) -> Pets | None:
+    result = await db.execute(
+        select(Pets)
+        .where(Pets.id == pet_id)
+    )
+    pet = result.scalar_one_or_none()
+    if pet is None:
+        return None
+    return pet
+
+
 async def  get_pets_by_owner_id(db: AsyncSession, owner_id: int, skip: int = 0) -> dict:
     skip = skip if skip >= 0 else 0
     limit = db_cfg.LIMIT
@@ -122,6 +133,30 @@ async def get_all_pets(db: AsyncSession, skip: int=0) -> dict:
     }
 
 
+async def get_all_pets_including_deleted(db: AsyncSession, skip: int = 0) -> dict:
+    skip = skip if skip >= 0 else 0
+    limit = db_cfg.LIMIT
+
+    result = await db.execute(
+        select(Pets)
+        .offset(skip)
+        .limit(limit)
+        .order_by(Pets.id)
+    )
+    pets = result.scalars().all()
+
+    count_result = await db.execute(select(func.count(Pets.id)))
+    total = count_result.scalar() or 0
+
+    return {
+        "items": [pet for pet in pets],
+        "total": total,
+        "page": (skip // limit) + 1,
+        "pages": max(1, (total + limit - 1) // limit),
+        "limit": limit,
+    }
+
+
 # Update
 async def update_pet(db: AsyncSession, pet_id: int, pet_update: PetUpdate) -> Pets | None:
     result = await db.execute(
@@ -180,6 +215,21 @@ async def delete_pet(db: AsyncSession, pet_id: int) -> Pets | None:
         return None
 
     pet.is_deleted = True
+    await db.flush()
+    await db.refresh(pet)
+    return pet
+
+
+async def restore_pet(db: AsyncSession, pet_id: int) -> Pets | None:
+    result = await db.execute(
+        select(Pets)
+        .where(Pets.id == pet_id)
+    )
+    pet = result.scalar_one_or_none()
+    if pet is None:
+        return None
+
+    pet.is_deleted = False
     await db.flush()
     await db.refresh(pet)
     return pet

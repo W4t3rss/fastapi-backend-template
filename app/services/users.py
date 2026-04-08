@@ -1,6 +1,4 @@
 
-from dataclasses import dataclass
-
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.exceptions.base import AppBaseException
 from app.models.users import Users
@@ -104,22 +102,29 @@ async def get_user_by_phone_number_service(db: AsyncSession, phone_number: str) 
     return user
 
 
-@dataclass
-class UserListResponse:
-    users: list[Users]
-    total: int
-    page: int
-    limit: int
-
-async def get_all_users_service(db: AsyncSession, skip: int = 0) -> UserListResponse:
-    result = await get_all_users(db, skip)
+async def get_user_by_id_admin_service(db: AsyncSession, user_id: int) -> Users:
+    user = await get_user_by_id_including_deleted(db, user_id)
+    if user is None:
+        logger.warning("Admin get user by ID failed: user not found, user_id={}", user_id)
+        raise UserNotFoundException()
     logger.info(
-        "Users listed: total={}, page={}, limit={}",
+        "Admin fetched user by ID: user_id={}, user_name={}, is_deleted={}",
+        user.id,
+        user.user_name,
+        user.is_deleted,
+    )
+    return user
+
+
+async def get_all_users_admin_service(db: AsyncSession, skip: int = 0) -> dict:
+    result = await get_all_users_including_deleted(db, skip)
+    logger.info(
+        "Admin listed users: total={}, page={}, limit={}",
         result.get("total"),
         result.get("page"),
         result.get("limit"),
     )
-    return UserListResponse(**result)
+    return result
 
 
 # Update
@@ -174,7 +179,6 @@ async def update_user_service(db: AsyncSession, user_id: int, user_update: UserU
 
 
 async def update_user_admin_service(db: AsyncSession, user_id: int, user_update: UserUpdateAdmin) -> Users:
-    """更新管理员用户"""
     try:
         user = await get_user_by_id(db, user_id)
         if user is None:
@@ -246,4 +250,33 @@ async def delete_user_service(db: AsyncSession, user_id: int, current_user_id: i
     except Exception as e:
         await db.rollback()
         logger.exception("Unexpected error during user deletion: {}", e)
+        raise
+
+
+async def restore_user_service(db: AsyncSession, user_id: int) -> Users:
+    try:
+        user = await get_user_by_id_including_deleted(db, user_id)
+        if user is None:
+            logger.warning("Restore user failed: user not found, user_id={}", user_id)
+            raise UserNotFoundException()
+
+        if not user.is_deleted:
+            logger.info("Restore user skipped: user already active, user_id={}, user_name={}", user.id, user.user_name)
+            return user
+
+        restored_user = await restore_user(db, user_id)
+        if restored_user is None:
+            logger.warning("Restore user failed after validation: user not found, user_id={}", user_id)
+            raise UserNotFoundException()
+
+        await db.commit()
+        logger.info("User restored: user_id={}, user_name={}", restored_user.id, restored_user.user_name)
+        return restored_user
+
+    except AppBaseException:
+        await db.rollback()
+        raise
+    except Exception as e:
+        await db.rollback()
+        logger.exception("Unexpected error during user restoration: {}", e)
         raise

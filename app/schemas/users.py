@@ -1,6 +1,6 @@
 
 from datetime import datetime
-from pydantic import Field, field_validator
+from pydantic import ConfigDict, Field, field_validator
 from .base import BaseRequest, BaseResponse
 from .validator import validate_phone_number 
 
@@ -18,15 +18,42 @@ class UserBase(BaseRequest):
 
 # Create
 class UserCreate(UserBase):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "user_name": "user1",
+                "phone_number": "13800138000",
+                "password": "12345678",
+            }
+        }
+    )
     password: str = Field(..., min_length=6, max_length=255, description="User's password") 
 
 
 class UserCreateAdmin(UserCreate):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "user_name": "user1",
+                "phone_number": "13800138000",
+                "password": "12345678",
+                "role": 0,
+            }
+        }
+    )
     role: int = Field(default=0, description="User's role, 0 for regular user, 1 for admin")
 
 
 # Update
 class UserUpdate(BaseRequest):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "user_name": "user1_new",
+                "phone_number": "13800138001",
+            }
+        }
+    )
     user_name: str | None = Field(default=None, min_length=2, max_length=50, description="User's name")
     phone_number: str | None = Field(default=None, max_length=20, description="User's phone number")
     password: str | None = Field(default=None, min_length=6, max_length=255, description="User's password")
@@ -37,6 +64,15 @@ class UserUpdate(BaseRequest):
         return validate_phone_number(value)
 
 class UserUpdateAdmin(UserUpdate):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "user_name": "user1_new",
+                "phone_number": "13800138001",
+                "role": 0,
+            }
+        }
+    )
     role: int | None = Field(default=None, description="User's role, 0 for regular user, 1 for admin")
 
 

@@ -49,6 +49,17 @@ async def get_user_by_id(db: AsyncSession, user_id: int) -> Users | None:
     return user
 
 
+async def get_user_by_id_including_deleted(db: AsyncSession, user_id: int) -> Users | None:
+    result = await db.execute(
+        select(Users)
+        .where(Users.id == user_id)
+    )
+    user = result.scalar_one_or_none()
+    if user is None:
+        return None
+    return user
+
+
 async def get_user_by_user_name(db: AsyncSession, user_name: str) -> Users | None:
     result = await db.execute(
         select(Users)
@@ -100,6 +111,29 @@ async def get_all_users(db: AsyncSession,skip:int=0) -> dict:
         "page": (skip // limit) + 1,
         "pages": max(1, (total + limit - 1) // limit),
         "limit": limit   
+    }
+
+
+async def get_all_users_including_deleted(db: AsyncSession, skip: int = 0) -> dict:
+    skip = skip if skip >= 0 else 0
+    limit = db_cfg.LIMIT
+    result = await db.execute(
+        select(Users)
+        .offset(skip)
+        .limit(limit)
+        .order_by(Users.id)
+    )
+    users = result.scalars().all()
+
+    count_result = await db.execute(select(func.count(Users.id)))
+    total = count_result.scalar() or 0
+
+    return {
+        "items": [user for user in users],
+        "total": total,
+        "page": (skip // limit) + 1,
+        "pages": max(1, (total + limit - 1) // limit),
+        "limit": limit,
     }
 
 
@@ -168,6 +202,21 @@ async def delete_user(db: AsyncSession, user_id: int) -> Users | None:
         return None
 
     user.is_deleted = True
+    await db.flush()
+    await db.refresh(user)
+    return user
+
+
+async def restore_user(db: AsyncSession, user_id: int) -> Users | None:
+    result = await db.execute(
+        select(Users)
+        .where(Users.id == user_id)
+    )
+    user = result.scalar_one_or_none()
+    if user is None:
+        return None
+
+    user.is_deleted = False
     await db.flush()
     await db.refresh(user)
     return user

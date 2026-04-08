@@ -129,6 +129,23 @@ class ValidationErrorException(AppBaseException):
         )
 
 
+# 503 Service Unavailable
+class ServiceUnavailableException(AppBaseException):
+    def __init__(
+        self,
+        message: str,
+        *,
+        error_code: str = "SERVICE_UNAVAILABLE",
+        details: Any | None = None,
+    ) -> None:
+        super().__init__(
+            message=message,
+            error_code=error_code,
+            http_status_code=503,
+            details=details
+        )
+
+
 # 500 Internal Server Error
 class InternalServerErrorException(AppBaseException):
     def __init__(

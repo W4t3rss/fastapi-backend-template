@@ -1,6 +1,6 @@
 
 from typing import Literal
-from pydantic import Field, ValidationInfo, field_validator
+from pydantic import ConfigDict, Field, ValidationInfo, field_validator
 from .validator import validate_phone_number,validate_password
 from .base import BaseRequest, BaseResponse
 
@@ -12,6 +12,17 @@ class Token(BaseResponse):
 
 
 class RegisterRequest(BaseRequest):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "user_name": "user1",
+                "phone_number": "13800138000",
+                "password": "12345678",
+                "confirm_password": "12345678",
+                "code": "123456",
+            }
+        }
+    )
     user_name: str = Field(..., min_length=2, max_length=50, description="Username")
     phone_number: str = Field(..., max_length=20, description="Phone number")
     password: str = Field(..., min_length=6, max_length=128, description="User password")
@@ -41,6 +52,14 @@ class RegisterResponse(BaseResponse):
 
 # Login
 class LoginRequest(BaseRequest):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "user_name": "user1",
+                "password": "12345678",
+            }
+        }
+    )
     user_name: str = Field(..., min_length=2, max_length=50, description="Username")
     password: str = Field(..., min_length=6, max_length=128, description="User password")  
 
@@ -52,6 +71,15 @@ class LoginResponse(Token):
 
 # Send Code
 class SendCodeRequest(BaseRequest):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "phone_number": "13800138000",
+                "scene": "register",
+                "return_code": True,
+            }
+        }
+    )
     phone_number: str = Field(..., max_length=20, description="Phone number")
     scene:Literal["register", "reset_password"] = Field(..., description="Verification code scenario: 'register' for registration, 'reset_password' for password reset")
     return_code: bool | None = Field(default=None, description="Whether to return the verification code in the response. For testing only; do not use in production")
@@ -69,6 +97,16 @@ class SendCodeResponse(BaseResponse):
 
 # Reset Password
 class ResetPasswordRequest(BaseRequest):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "phone_number": "13800138000",
+                "new_password": "87654321",
+                "confirm_password": "87654321",
+                "code": "123456",
+            }
+        }
+    )
     phone_number: str | None = Field(default=None, max_length=20, description="Phone number")
     new_password: str = Field(..., min_length=6, max_length=128, description="New password")
     confirm_password: str = Field(..., min_length=6, max_length=128, description="Confirm new password")

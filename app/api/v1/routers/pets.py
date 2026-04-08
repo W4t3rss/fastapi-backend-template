@@ -1,5 +1,7 @@
 
-from fastapi import APIRouter, Depends, Query, status
+from typing import Annotated
+
+from fastapi import APIRouter, Body, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.deps import get_current_user, get_current_user_pet, get_db
 from app.models.pets import Pets
@@ -68,7 +70,19 @@ async def get_pet(
 )
 async def update_pet(
     pet_id: int,
-    pet_update: PetUpdate,
+    pet_update: Annotated[
+        PetUpdate,
+        Body(
+            openapi_examples={
+                "rename_pet": {
+                    "summary": "Rename the pet",
+                    "value": {
+                        "pet_name": "Buddy Jr.",
+                    },
+                },
+            }
+        ),
+    ],
     db: AsyncSession = Depends(get_db),
     _pet: Pets = Depends(get_current_user_pet),
 ) -> PetRead:

@@ -11,7 +11,7 @@ from app.exceptions.users import UserNotFoundException
 from app.models.users import Users
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/v1/auth/token")
 
 
 async def get_current_user(

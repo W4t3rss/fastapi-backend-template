@@ -1,5 +1,7 @@
 
-from fastapi import APIRouter, Depends, status
+from typing import Annotated
+
+from fastapi import APIRouter, Body, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.deps import get_current_user, get_db
 from app.models.users import Users
@@ -29,7 +31,39 @@ async def get_me(
     summary="Update current user profile",
 )
 async def update_me(
-    user_update: UserUpdate,
+    user_update: Annotated[
+        UserUpdate,
+        Body(
+            openapi_examples={
+                "full_update": {
+                    "summary": "Complete example",
+                    "value": {
+                        "user_name": "user1_new",
+                        "phone_number": "13800138001",
+                        "password": "87654321",
+                    },
+                },
+                "rename_profile": {
+                    "summary": "Change username",
+                    "value": {
+                        "user_name": "user1_new",
+                    },
+                },
+                "change_phone": {
+                    "summary": "Change phone number",
+                    "value": {
+                        "phone_number": "13800138001",
+                    },
+                },
+                "change_password": {
+                    "summary": "Change password",
+                    "value": {
+                        "password": "87654321",
+                    },
+                },
+            }
+        ),
+    ],
     db: AsyncSession = Depends(get_db),
     current_user: Users = Depends(get_current_user),
 ) -> UserRead:
