@@ -8,10 +8,6 @@ path_cfg = get_path_cfg()
 
 
 def init_logger(level: str | None = None) -> None:
-    """
-    初始化日志系统，配置终端和文件日志
-    :param level: 可选的日志级别，默认为环境变量 LOG_LEVEL 或 "DEBUG"。
-    """
     if level is None:
         level = os.getenv("LOG_LEVEL", "DEBUG").upper()
     logger.remove()

@@ -6,9 +6,6 @@ security_cfg = get_security_cfg()
 
 
 def create_access_token(sub: str | int, expires_delta: timedelta | None = None) -> str:
-    """
-    生成 JWT 访问令牌
-    """
     now = datetime.now(timezone.utc)
     expire = now + (
         expires_delta or timedelta(minutes=security_cfg.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -27,9 +24,6 @@ def create_access_token(sub: str | int, expires_delta: timedelta | None = None) 
 
 
 def verify_access_token(token: str) -> str:
-    """
-    验证 JWT 访问令牌并返回 sub
-    """
     try:
         payload = jwt.decode(
             token,

@@ -37,8 +37,6 @@ class ErrorCfg(BaseSettings):
     PHONE_NOT_VERIFIED: str = "PHONE_NOT_VERIFIED"
     OLD_PASSWORD_INCORRECT: str = "OLD_PASSWORD_INCORRECT"
     
-    # PASSWORD_MISMATCH: str = "PASSWORD_MISMATCH"
-
 
 @lru_cache
 def get_error_cfg() -> ErrorCfg:

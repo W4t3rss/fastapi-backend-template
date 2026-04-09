@@ -7,7 +7,7 @@ class AppBaseException(Exception):
     def __init__(
             self,
             message: str ,
-            *,  # 位置参数 message，其他参数必须使用关键字传递
+            *, 
             error_code:str = "ERROR",
             http_status_code: int = 400,
             details: Any | None = None
@@ -22,8 +22,7 @@ class AppBaseException(Exception):
         return {
             "error_code": self.error_code,
             "message": self.message,
-            # 通常不建议在异常响应中直接返回 HTTP 状态码，因为它已经包含在 HTTP 响应的状态行中
-            # "http_status_code": self.http_status_code,  # 
+            # "http_status_code": self.http_status_code,   
             "details": self.details
         }
 

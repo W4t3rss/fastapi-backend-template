@@ -1,7 +1,6 @@
+
 from typing import Any
-
 from app.core.config.error_cfg import get_error_cfg
-
 from .base import (
     BadRequestException,
     ForbiddenException,
@@ -9,7 +8,6 @@ from .base import (
     ServiceUnavailableException,
     UnauthorizedException,
 )
-
 error_cfg = get_error_cfg()
 
 
